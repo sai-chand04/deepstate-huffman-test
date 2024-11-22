@@ -1,0 +1,48 @@
+name: DeepState Huffman Test
+
+on:
+  push:
+    branches:
+      - main  # Trigger action on push to the 'main' branch
+  pull_request:
+    branches:
+      - main  # Trigger action on pull request to the 'main' branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+
+    - name: Set up dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+        cmake \
+        g++ \
+        make \
+        git \
+        clang \
+        libstdc++-10-dev \
+        libcurl4-openssl-dev \
+        zlib1g-dev
+
+    - name: Clone DeepState
+      run: |
+        git clone --recursive https://github.com/trailofbits/deepstate.git
+        cd deepstate
+        mkdir build
+        cd build
+        cmake ..
+        make
+
+    - name: Build the test with DeepState
+      run: |
+        cd $GITHUB_WORKSPACE  # Go back to the root of your repo
+        g++ -g -o test_huffman_code test_huffman_code.cpp -ldeepstate -lstdc++ -lm
+
+    - name: Run the test
+      run: |
+        ./test_huffman_code --fuzz
