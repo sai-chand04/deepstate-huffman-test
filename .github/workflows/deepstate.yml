@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the code
+    # Step 1: Checkout the repository
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Step 2: Set up dependencies
+    # Step 2: Install required dependencies
     - name: Install required dependencies
       run: |
         sudo apt-get update
@@ -39,17 +39,17 @@ jobs:
         git clone --recursive https://github.com/trailofbits/deepstate.git
         cd deepstate
         mkdir build
-        cd build
 
     # Step 4: Build DeepState
     - name: Build DeepState
       run: |
+        cd deepstate/build  # Change to the correct directory where CMakeLists.txt is located
         cmake ..
         make clean
         make
 
-    # Step 5: Run tests (optional, if needed)
+    # Step 5: Run DeepState tests (optional, if tests are required)
     - name: Run DeepState tests
       run: |
-        cd ..
+        cd deepstate/build  # Ensure we are in the correct directory
         ./tests/deepstate_test
