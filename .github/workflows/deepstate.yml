@@ -13,23 +13,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v3  # Update to v3 to avoid Node.js version deprecation
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
     - name: Set up dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-        cmake \
-        g++ \
-        make \
-        git \
-        clang \
-        libstdc++-10-dev \
-        libcurl4-openssl-dev \
-        zlib1g-dev
+          cmake \
+          g++ \
+          make \
+          git \
+          clang \
+          libc6-dev \
+          libstdc++-10-dev \
+          libcurl4-openssl-dev \
+          zlib1g-dev
 
-    - name: Clone DeepState
+    - name: Clone and build DeepState
       run: |
         git clone --recursive https://github.com/trailofbits/deepstate.git
         cd deepstate
@@ -38,7 +39,7 @@ jobs:
         cmake ..
         make
 
-    - name: Build the test with DeepState
+    - name: Build test code
       run: |
         cd $GITHUB_WORKSPACE
         g++ -g -o test_huffman_code test_huffman_code.cpp -ldeepstate -lstdc++ -lm
