@@ -1,4 +1,4 @@
-name: DeepState Huffman Test
+name: Build DeepState Project
 
 on:
   push:
@@ -13,10 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout the code
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up dependencies
+    # Step 2: Set up dependencies
+    - name: Install required dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
@@ -28,22 +30,26 @@ jobs:
           libc6-dev \
           libstdc++-10-dev \
           libcurl4-openssl-dev \
-          zlib1g-dev
+          zlib1g-dev \
+          build-essential
 
-    - name: Clone and build DeepState
+    # Step 3: Clone DeepState repository
+    - name: Clone DeepState repository
       run: |
         git clone --recursive https://github.com/trailofbits/deepstate.git
         cd deepstate
         mkdir build
         cd build
+
+    # Step 4: Build DeepState
+    - name: Build DeepState
+      run: |
         cmake ..
+        make clean
         make
 
-    - name: Build test code
+    # Step 5: Run tests (optional, if needed)
+    - name: Run DeepState tests
       run: |
-        cd $GITHUB_WORKSPACE
-        g++ -g -o test_huffman_code test_huffman_code.cpp -ldeepstate -lstdc++ -lm
-
-    - name: Run the test
-      run: |
-        ./test_huffman_code --fuzz
+        cd ..
+        ./tests/deepstate_test
